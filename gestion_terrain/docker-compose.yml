@@ -1,0 +1,48 @@
+version: '3'
+ 
+services:
+
+  db:
+    image: mysql:latest
+    container_name: mysqldb
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: terrain
+    network_mode: bridge
+    ports:
+      - "3306:3306"
+    volumes:
+      - dbdata:/var/lib/mysql
+      
+  mywebapp:
+    image: moufakkir/gestion_terrain:1.0
+    container_name: gestion_terrain
+    ports:
+      - 8080:8080
+    links:
+      - 'db:mysql'
+    network_mode: bridge
+    environment:
+      MODX_DB_HOST: 'mysql:3306'
+      MODX_DB_PASSWORD: root
+    
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: phpmyadmin
+    network_mode: bridge
+    links:
+      - db
+    environment:
+      PMA_HOST: mysqldb
+      PMA_PORT: 3306
+      PMA_ARBITRARY: 1
+    restart: always
+    ports:
+      - 8081:80
+volumes:
+  dbdata:
+  
+
+  
+  
+ 
